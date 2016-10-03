@@ -45,7 +45,7 @@ RSpec.describe 'sudoku' do
       assert_invalid board
     end
 
-    it 'validates that all digits are 1-9, and underscores, separated by newlines' do
+    it 'validates that all digits are 1-9, and underscores, separated by newlines, ignoring spaces and blank lines' do
       b = board.dup
       b[0] = '0'
       assert_invalid b
@@ -53,6 +53,13 @@ RSpec.describe 'sudoku' do
       b = board.dup
       b[0] = '_'
       assert_valid b
+
+      b = " #{board}"
+      b[10, 0] = "\n"
+      assert_valid board
+      sudoku = Sudoku.from_string(b)
+      expect(sudoku.at 0, 0).to eq '5'
+      expect(sudoku.at 1, 0).to eq '6'
     end
   end
 

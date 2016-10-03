@@ -2,15 +2,16 @@ class Sudoku
   InvalidBoard = Class.new RuntimeError
 
   def self.from_string(board_string)
-    board = board_string.lines.map do |line|
-      chars = line.chars
-      chars.pop
-      validate! chars
-    end
+    board = board_string.gsub(" ", "")
+                        .gsub("\n\n", "\n")
+                        .lines.map { |line|
+      line.chars.tap(&:pop).tap { |chars| validate! chars }
+    }
     board.transpose.each { |col| validate! col }
     board.each_slice(3) do |rows|
       rows.map { |row| row.each_slice(3).to_a }
-          .transpose.each { |chunks| validate! chunks.flatten }
+          .transpose.map(&:flatten)
+          .each { |chunk| validate! chunk }
     end
     new(board)
   end
