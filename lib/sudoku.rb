@@ -34,15 +34,19 @@ class Sudoku
   end
 
 
-  attr_accessor :board
-
-  def initialize(board)
-    self.board = board
+  def initialize(rows)
+    self.rows   = rows
+    self.cols   = rows.transpose
+    self.blocks = rows.each_slice(3).map do |slice|
+      slice.map do |line|
+        line.each_slice(3).to_a
+      end.transpose.map(&:flatten)
+    end
   end
 
   def solve!
     return true if solved?
-    puts "\n#{self}"
+    # puts "\n#{self}"
     # if STDIN.gets == "y\n"
     #   require "pry"
     #   binding.pry
@@ -61,11 +65,11 @@ class Sudoku
   end
 
   def at(y, x)
-    board[y][x]
+    rows[y][x]
   end
 
   def set(y, x, value)
-    board[y][x] = value
+    rows[y][x] = value
   end
 
   AVAILABLE = [*1..9].freeze
@@ -78,7 +82,7 @@ class Sudoku
   end
 
   def each_unsolved
-    board.each_with_index do |row, y|
+    rows.each_with_index do |row, y|
       row.each_with_index do |value, x|
         yield y, x unless value
       end
@@ -86,27 +90,28 @@ class Sudoku
   end
 
   def solved?
-    board.all? { |row| row.all? &:itself }
+    rows.all? { |row| row.all? &:itself }
   end
 
   def row(y)
-    board[y]
+    rows[y]
   end
 
   def col(x)
-    board.transpose[x]
+    cols[x]
   end
 
   def block(y, x)
-    slice = board.each_slice(3).to_a[y/3]
-    slice.flat_map do |line|
-      line.each_slice(3).to_a[x/3]
-    end
+    blocks[y/3][x/3]
   end
 
   def to_s
-    board.map do |row|
+    rows.map do |row|
       row.map { |val| val ? val : " " }.join
     end.join("\n")
   end
+
+  private
+
+  attr_accessor :rows, :cols, :blocks
 end
