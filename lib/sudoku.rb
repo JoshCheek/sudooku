@@ -47,13 +47,8 @@ class Sudoku
   def solve!
     return true if solved?
     # puts "\n#{self}"
-    # if STDIN.gets == "y\n"
-    #   require "pry"
-    #   binding.pry
-    # end
     each_unsolved do |y, x|
       potentials = potentials_at(y, x)
-      # p [y, x] => potentials
       return false if potentials.empty?
       potentials.each do |potential|
         set y, x, potential

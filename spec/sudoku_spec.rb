@@ -146,12 +146,55 @@ RSpec.describe 'sudoku' do
       SUDOKU
     end
 
-    it 'can solve by a conjunction of missing pieces horizontally and vertically'
-    it 'can solve by a conjunction of missing pieces horizontally by block'
-    it 'can solve by a conjunction of missing pieces vertically by block'
-    it 'can solve by a conjunction of missing pieces horizontally, vertically, and by block'
+    it 'can solve one with a bunch of spots knocked out' do
+      sudoku = assert_solves <<~SUDOKU, <<~SUDOKU
+        53_678_12
+        6_21953_8
+        1983_256_
+        859_614_3
+        4268_3791
+        7_392_856
+        _615_7284
+        _87419_35
+        3_528_179
+      SUDOKU
+        534678912
+        672195348
+        198342567
+        859761423
+        426853791
+        713924856
+        961537284
+        287419635
+        345286179
+      SUDOKU
+    end
 
-    xit 'can solve the hard problem given in the video', t:true do
+    xit 'can solve a practice board I found on the internet' do
+      sudoku = assert_solves <<~SUDOKU, <<~SUDOKU
+        53__7____
+        6__195___
+        _98____6_
+        8___6___3
+        4__8_3__1
+        7___2___6
+        _6____28_
+        ___419__5
+        ____8__79
+      SUDOKU
+        534678912
+        672195348
+        198342567
+        859761423
+        426853791
+        713924856
+        961537284
+        287419635
+        345286179
+      SUDOKU
+    end
+
+    xit 'can solve the hard problem given in the video' do
       sudoku = Sudoku.from_string <<~SUDOKU
         8__ ___ ___
         __3 6__ ___
@@ -165,6 +208,8 @@ RSpec.describe 'sudoku' do
         __8 5__ _1_
         _9_ ___ 4__
       SUDOKU
+      require "pry"
+      binding.pry
       expect(sudoku.solve!).to eq true
     end
   end
