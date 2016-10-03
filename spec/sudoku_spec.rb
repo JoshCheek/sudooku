@@ -238,6 +238,7 @@ RSpec.describe 'sudoku' do
       SUDOKU
     end
 
+    # too inefficient :(
     xit 'can solve a practice board I found on the internet' do
       sudoku = assert_solves <<~SUDOKU, <<~SUDOKU
         53__7____
