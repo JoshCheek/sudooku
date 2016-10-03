@@ -63,6 +63,74 @@ RSpec.describe 'sudoku' do
     end
   end
 
+  describe 'accessing' do
+    let(:sudoku) { Sudoku.from_string <<~SUDOKU }
+      534678912
+      672195348
+      198342567
+      859761423
+      426853791
+      713924856
+      961537284
+      287419635
+      345286179
+    SUDOKU
+
+    it 'gets the rows' do
+      expect(sudoku.row 0).to eq [5, 3, 4, 6, 7, 8, 9, 1, 2]
+      expect(sudoku.row 1).to eq [6, 7, 2, 1, 9, 5, 3, 4, 8]
+      expect(sudoku.row 2).to eq [1, 9, 8, 3, 4, 2, 5, 6, 7]
+      expect(sudoku.row 3).to eq [8, 5, 9, 7, 6, 1, 4, 2, 3]
+      expect(sudoku.row 4).to eq [4, 2, 6, 8, 5, 3, 7, 9, 1]
+      expect(sudoku.row 5).to eq [7, 1, 3, 9, 2, 4, 8, 5, 6]
+      expect(sudoku.row 6).to eq [9, 6, 1, 5, 3, 7, 2, 8, 4]
+      expect(sudoku.row 7).to eq [2, 8, 7, 4, 1, 9, 6, 3, 5]
+      expect(sudoku.row 8).to eq [3, 4, 5, 2, 8, 6, 1, 7, 9]
+    end
+
+    it 'gets the columns' do
+      expect(sudoku.col 0).to eq [5, 6, 1, 8, 4, 7, 9, 2, 3]
+      expect(sudoku.col 1).to eq [3, 7, 9, 5, 2, 1, 6, 8, 4]
+      expect(sudoku.col 2).to eq [4, 2, 8, 9, 6, 3, 1, 7, 5]
+      expect(sudoku.col 3).to eq [6, 1, 3, 7, 8, 9, 5, 4, 2]
+      expect(sudoku.col 4).to eq [7, 9, 4, 6, 5, 2, 3, 1, 8]
+      expect(sudoku.col 5).to eq [8, 5, 2, 1, 3, 4, 7, 9, 6]
+      expect(sudoku.col 6).to eq [9, 3, 5, 4, 7, 8, 2, 6, 1]
+      expect(sudoku.col 7).to eq [1, 4, 6, 2, 9, 5, 8, 3, 7]
+      expect(sudoku.col 8).to eq [2, 8, 7, 3, 1, 6, 4, 5, 9]
+    end
+
+    it 'gets the blocks' do
+      expect(sudoku.block 2, 0).to eq [5, 3, 4, 6, 7, 2, 1, 9, 8]
+      expect(sudoku.block 3, 0).to eq [8, 5, 9, 4, 2, 6, 7, 1, 3]
+      expect(sudoku.block 5, 0).to eq [8, 5, 9, 4, 2, 6, 7, 1, 3]
+      expect(sudoku.block 6, 0).to eq [9, 6, 1, 2, 8, 7, 3, 4, 5]
+
+      expect(sudoku.block 0, 2).to eq [5, 3, 4, 6, 7, 2, 1, 9, 8]
+      expect(sudoku.block 0, 3).to eq [6, 7, 8, 1, 9, 5, 3, 4, 2]
+      expect(sudoku.block 0, 5).to eq [6, 7, 8, 1, 9, 5, 3, 4, 2]
+      expect(sudoku.block 0, 6).to eq [9, 1, 2, 3, 4, 8, 5, 6, 7]
+    end
+
+    it 'sets a value into the correct row/col/block' do
+      expect(sudoku.row   4).to    eq [4, 2, 6, 8, 5, 3, 7, 9, 1]
+      expect(sudoku.col   4).to    eq [7, 9, 4, 6, 5, 2, 3, 1, 8]
+      expect(sudoku.block 4, 4).to eq [7, 6, 1, 8, 5, 3, 9, 2, 4]
+      sudoku.set 3, 3, 1
+      sudoku.set 3, 4, 2
+      sudoku.set 3, 5, 3
+      sudoku.set 4, 3, 4
+      sudoku.set 4, 4, 5
+      sudoku.set 4, 5, 6
+      sudoku.set 5, 3, 7
+      sudoku.set 5, 4, 8
+      sudoku.set 5, 5, 9
+      expect(sudoku.row   4).to    eq [4, 2, 6, 4, 5, 6, 7, 9, 1]
+      expect(sudoku.col   4).to    eq [7, 9, 4, 2, 5, 8, 3, 1, 8]
+      expect(sudoku.block 4, 4).to eq [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    end
+  end
+
   describe 'solving' do
     def assert_solves(board, solution)
       sudoku = Sudoku.from_string(board)
