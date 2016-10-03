@@ -13,17 +13,25 @@ RSpec.describe 'sudoku' do
     345286179
   SUDOKU
 
+  def assert_valid(board)
+    expect { Sudoku.from_string board }.to_not raise_error
+  end
+
+  def assert_invalid(board)
+    expect { Sudoku.from_string board }.to raise_error Sudoku::InvalidBoard
+  end
+
   describe 'validation' do
     before { assert_valid board }
 
     it 'validates that the same number doesn\'t show up multiple times on the same horizontal' do
-      board[0], board[1] = board[1], board[0]
+      expect(board[10]).to eq '6'
+      board[0], board[10] = board[10], board[0]
       assert_invalid board
     end
 
     it 'validates that the same number doesn\'t show up multiple times on the same vertical' do
-      expect(board[10]).to eq '6'
-      board[0], board[10] = board[10], board[0]
+      board[0], board[1] = board[1], board[0]
       assert_invalid board
     end
 
@@ -31,7 +39,7 @@ RSpec.describe 'sudoku' do
       # We swap within the rows, so the rows are still fine
       # And this pair is special b/c the two row swaps keep the verticals fine, too
       # So it is only the block that becomes invalid
-      expect(board.values_at 2, 6, 32, 36).to eq ['4', '9', '9', '4']
+      expect(board.chars.values_at 2, 6, 32, 36).to eq ['4', '9', '9', '4']
       board[2],  board[6]  = board[6],  board[2]
       board[32], board[36] = board[36], board[32]
       assert_invalid board
